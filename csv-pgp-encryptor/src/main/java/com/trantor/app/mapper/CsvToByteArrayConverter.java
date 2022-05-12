@@ -7,9 +7,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.trantor.app.model.BookModel;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.FileReader;
+import java.io.*;
 
 @Component
 public class CsvToByteArrayConverter {
@@ -17,10 +15,9 @@ public class CsvToByteArrayConverter {
 
     public byte[] csvToByteArrayConverter() {
 
-
         // write to byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(baos);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        DataOutputStream csvToByteStream = new DataOutputStream(byteArrayOutputStream);
 
 
         CsvMapper csvMapper = new CsvMapper();
@@ -32,14 +29,13 @@ public class CsvToByteArrayConverter {
         try (FileReader fileReader = new FileReader(FILEPATH)) {
             MappingIterator<BookModel> iterator = objectReader.readValues(fileReader);
             while (iterator.hasNext()) {
-                out.writeUTF(iterator.next().toString());
+                csvToByteStream.writeUTF(iterator.next().toString());
             }
         } catch (Exception exception) {
             System.out.println("|| Unable to process the CSV file ||");
         }
 
-        return baos.toByteArray();
-
+        return byteArrayOutputStream.toByteArray();
 
     }
 }
